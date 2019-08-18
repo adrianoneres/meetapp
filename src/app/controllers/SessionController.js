@@ -32,7 +32,7 @@ class SessionController {
 
     const { id, name } = user;
 
-    res.json({
+    return res.json({
       user: {
         id,
         name,
