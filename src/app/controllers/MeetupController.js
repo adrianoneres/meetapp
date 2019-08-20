@@ -8,7 +8,9 @@ import User from '../models/User';
 class MeetupController {
   async index(req, res) {
     const page = req.query.page || 1;
-    const where = {};
+    const where = {
+      user_id: req.userId,
+    };
 
     if (req.query.date) {
       const betweenDate = parseISO(req.query.date);
