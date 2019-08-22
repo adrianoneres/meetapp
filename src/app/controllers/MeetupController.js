@@ -3,6 +3,7 @@ import { isBefore, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { Op } from 'sequelize';
 
 import Meetup from '../models/Meetup';
+import File from '../models/File';
 import User from '../models/User';
 
 class MeetupController {
@@ -28,6 +29,14 @@ class MeetupController {
     });
 
     return res.json(meetups);
+  }
+
+  async show(req, res) {
+    const meetup = await Meetup.findByPk(req.params.id, {
+      include: [File],
+    });
+
+    return res.json(meetup);
   }
 
   async store(req, res) {
@@ -70,7 +79,7 @@ class MeetupController {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const meetup = await Meetup.findByPk(req.params.id);
+    let meetup = await Meetup.findByPk(req.params.id);
 
     if (meetup.user_id !== req.userId) {
       return res
@@ -90,7 +99,7 @@ class MeetupController {
         .json({ error: 'You can not edit a meetup to a past date.' });
     }
 
-    await meetup.update(req.body);
+    meetup = await meetup.update(req.body);
 
     return res.json(meetup);
   }
