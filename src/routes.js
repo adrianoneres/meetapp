@@ -6,6 +6,7 @@ import multerConfig from './config/multer';
 
 import FileController from './app/controllers/FileController';
 import MeetupController from './app/controllers/MeetupController';
+import AvailableMeetupController from './app/controllers/AvailableMeetupController';
 import SessionController from './app/controllers/SessionController';
 import SubscriptionController from './app/controllers/SubscriptionController';
 import UserController from './app/controllers/UserController';
@@ -20,6 +21,7 @@ routes.use(authMiddleware);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
+routes.get('/available', AvailableMeetupController.index);
 routes.get('/meetups', MeetupController.index);
 routes.get('/meetups/:id', MeetupController.show);
 routes.post('/meetups', MeetupController.store);
@@ -29,6 +31,7 @@ routes.delete('/meetups/:id', MeetupController.delete);
 routes.post('/meetups/:id/subscriptions', SubscriptionController.store);
 
 routes.get('/subscriptions', SubscriptionController.index);
+routes.delete('/subscriptions/:id', SubscriptionController.delete);
 
 routes.put('/users', UserController.update);
 

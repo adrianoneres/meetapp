@@ -6,6 +6,7 @@ import Subscription from '../models/Subscription';
 import SubscriptionMail from '../jobs/SubscriptionMail';
 import Queue from '../../lib/Queue';
 import User from '../models/User';
+import File from '../models/File';
 
 class SubscriptionController {
   async index(req, res) {
@@ -22,6 +23,14 @@ class SubscriptionController {
               [Op.gt]: new Date(),
             },
           },
+          include: [
+            {
+              model: User,
+              required: true,
+              attributes: ['id', 'name'],
+            },
+            File,
+          ],
         },
       ],
       order: [[Meetup, 'date']],
@@ -80,6 +89,20 @@ class SubscriptionController {
     });
 
     return res.json(subscription);
+  }
+
+  async delete(req, res) {
+    const subscription = await Subscription.findByPk(req.params.id);
+
+    if (subscription.user_id !== req.userId) {
+      return res.status(401).json({
+        error: 'You can not delete a subscription you did not create.',
+      });
+    }
+
+    await subscription.destroy();
+
+    return res.send();
   }
 }
 
